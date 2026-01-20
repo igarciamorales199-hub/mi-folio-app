@@ -1,6 +1,220 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-// --- Iconos Inline (SVG) para no depender de librerías externas ---
+// --- ESTILOS CSS (Incrustados para garantizar diseño sin dependencias externas) ---
+const styles = `
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  
+  .app-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f5f9; /* Slate 100 */
+    padding: 1rem;
+    color: #1e293b; /* Slate 800 */
+  }
+
+  .card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 500px;
+    overflow: hidden;
+  }
+
+  .header {
+    background-color: #2563eb; /* Blue 600 */
+    padding: 1.5rem;
+    text-align: center;
+    color: white;
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .header p {
+    margin: 0.5rem 0 0 0;
+    color: #dbeafe; /* Blue 100 */
+    font-size: 0.875rem;
+  }
+
+  .content {
+    padding: 2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #334155; /* Slate 700 */
+    margin-bottom: 0.25rem;
+    margin-left: 0.25rem;
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  .input-icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding-left: 0.75rem;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    color: #94a3b8; /* Slate 400 */
+  }
+
+  .input {
+    width: 100%;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border: 1px solid #cbd5e1; /* Slate 300 */
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .input:focus {
+    border-color: #3b82f6; /* Blue 500 */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+
+  .helper-text {
+    font-size: 0.75rem;
+    color: #94a3b8; /* Slate 400 */
+    margin-top: 0.25rem;
+    margin-left: 0.25rem;
+  }
+
+  .error-box {
+    background-color: #fef2f2; /* Red 50 */
+    color: #dc2626; /* Red 600 */
+    font-size: 0.875rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .btn-primary {
+    width: 100%;
+    background-color: #2563eb; /* Blue 600 */
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .btn-primary:hover {
+    background-color: #1d4ed8; /* Blue 700 */
+  }
+
+  .result-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .result-title {
+    text-align: center;
+    font-size: 0.875rem;
+    color: #64748b; /* Slate 500 */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .folio-display {
+    background-color: #1e293b; /* Slate 800 */
+    border-radius: 0.75rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  .folio-code {
+    font-family: monospace;
+    font-size: 1.5rem;
+    color: #4ade80; /* Green 400 */
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-copy {
+    padding: 0.5rem;
+    background-color: #334155; /* Slate 700 */
+    border: none;
+    border-radius: 0.5rem;
+    color: #cbd5e1; /* Slate 300 */
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-copy:hover {
+    background-color: #475569; /* Slate 600 */
+    color: white;
+  }
+
+  .details-box {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: #94a3b8; /* Slate 400 */
+    background-color: #f8fafc; /* Slate 50 */
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    border: 1px solid #e2e8f0; /* Slate 200 */
+  }
+
+  .details-list {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin: 0.25rem 0 0 0;
+  }
+  
+  .details-list li {
+    margin-bottom: 0.125rem;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+`;
+
+// --- Iconos Inline (SVG) ---
 const Icon = ({ size = 24, className = "", children }) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
@@ -13,6 +227,7 @@ const Icon = ({ size = 24, className = "", children }) => (
     strokeLinecap="round" 
     strokeLinejoin="round" 
     className={className}
+    style={{ display: 'block' }}
   >
     {children}
   </svg>
@@ -53,8 +268,8 @@ const AlertCircle = (props) => (
     <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
   </Icon>
 );
-// ------------------------------------------------------------------
 
+// --- Componente Principal ---
 const App = () => {
   const [formData, setFormData] = useState({
     fullName: '',
@@ -64,40 +279,22 @@ const App = () => {
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
-  // Inyectar Tailwind CSS automáticamente si no está presente
-  // Esto asegura que se vea bien incluso si el proyecto no tiene la configuración completa
-  useEffect(() => {
-    const existingScript = document.querySelector('script[src="https://cdn.tailwindcss.com"]');
-    if (!existingScript) {
-      const script = document.createElement('script');
-      script.src = "https://cdn.tailwindcss.com";
-      script.async = true;
-      document.head.appendChild(script);
-    }
-  }, []);
-
-  // Alfabeto en español incluyendo la Ñ para el cálculo de índices
   const spanishAlphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    setError(''); // Limpiar errores al escribir
-    setFolio(''); // Limpiar folio anterior si cambian datos
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setError('');
+    setFolio('');
     setCopied(false);
   };
 
   const getLetterNumber = (char) => {
     if (!char) return 0;
     const upperChar = char.toUpperCase();
-    // indexOf retorna índice base 0 (A=0), sumamos 1 para que sea base 1 (A=1)
     const index = spanishAlphabet.indexOf(upperChar);
     return index !== -1 ? index + 1 : 0;
   };
 
-  // Helper para obtener partes del nombre de forma consistente (maneja espacios dobles)
   const getNameParts = (fullName) => {
     if (!fullName) return [];
     return fullName.trim().split(/\s+/);
@@ -105,55 +302,36 @@ const App = () => {
 
   const generateFolio = (e) => {
     e.preventDefault();
-    
-    // 1. Validaciones básicas
     if (!formData.fullName.trim() || !formData.date) {
       setError('Por favor completa el nombre y la fecha.');
       return;
     }
-
-    // Dividir el nombre completo usando el helper seguro
     const nameParts = getNameParts(formData.fullName);
-    
     if (nameParts.length < 2) {
       setError('Por favor ingresa al menos un nombre y un apellido.');
       return;
     }
-
     const firstName = nameParts[0];
-    const lastName = nameParts[1]; // Tomamos la segunda palabra como primer apellido
+    const lastName = nameParts[1];
 
-    // Validar longitud de nombres para poder extraer la segunda letra
     if (firstName.length < 2 || lastName.length < 2) {
       setError('El nombre y el apellido deben tener al menos 2 letras cada uno.');
       return;
     }
 
-    // 2. Lógica de generación del Folio
     try {
-      // Variable 1: Inicial del primer nombre
       const v1 = firstName[0].toUpperCase();
-
-      // Variable 2: Número de la segunda letra del primer nombre (Alfabeto Español)
       const v2 = getLetterNumber(firstName[1]);
-
-      // Variable 3: Primer letra del primer apellido
       const v3 = lastName[0].toUpperCase();
-
-      // Variable 4: Número de la segunda letra del primer apellido (Alfabeto Español)
       const v4 = getLetterNumber(lastName[1]);
-
-      // Variable 5: Día del mes (dos dígitos)
-      // Dividimos por guiones: YYYY-MM-DD -> [YYYY, MM, DD]
-      // Tomamos el índice 2 que corresponde al día
       const dateParts = formData.date.split('-');
-      const v5 = dateParts[2] || '00'; // Fallback por seguridad
+      const v5 = dateParts[2] || '00';
 
       const newFolio = `${v1}${v2}${v3}${v4}${v5}`;
       setFolio(newFolio);
     } catch (err) {
       console.error(err);
-      setError('Ocurrió un error al procesar los datos. Verifica que no haya caracteres especiales.');
+      setError('Ocurrió un error al procesar los datos.');
     }
   };
 
@@ -163,116 +341,113 @@ const App = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Variables para el desglose visual (seguro contra errores de renderizado)
   const namePartsDisplay = getNameParts(formData.fullName);
   const firstNameDisplay = namePartsDisplay[0] || '';
   const lastNameDisplay = namePartsDisplay[1] || '';
 
   return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4 font-sans text-slate-800">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
-        
-        {/* Header */}
-        <div className="bg-blue-600 p-6 text-white text-center">
-          <h1 className="text-2xl font-bold flex items-center justify-center gap-2">
-            <Hash className="w-6 h-6" />
-            Generador de Folios
-          </h1>
-          <p className="text-blue-100 mt-2 text-sm">Sistema de identificación automático</p>
-        </div>
+    <>
+      <style>{styles}</style>
+      <div className="app-container">
+        <div className="card">
+          
+          {/* Header */}
+          <div className="header">
+            <h1>
+              <Hash size={24} />
+              Generador de Folios
+            </h1>
+            <p>Sistema de identificación automático</p>
+          </div>
 
-        <div className="p-8">
-          <form onSubmit={generateFolio} className="space-y-5">
-            
-            {/* Input Nombre */}
-            <div className="space-y-1">
-              <label className="block text-sm font-medium text-slate-700 ml-1">Nombre Completo</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                  <User size={18} />
+          <div className="content">
+            <form onSubmit={generateFolio}>
+              
+              {/* Input Nombre */}
+              <div className="form-group">
+                <label className="label">Nombre Completo</label>
+                <div className="input-wrapper">
+                  <div className="input-icon">
+                    <User size={18} />
+                  </div>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder="Ej. Juan Pérez López"
+                    className="input"
+                  />
                 </div>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  placeholder="Ej. Juan Pérez López"
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                />
+                <p className="helper-text">Se usará el primer nombre y la primera palabra del apellido.</p>
               </div>
-              <p className="text-xs text-slate-400 ml-1">Se usará el primer nombre y la primera palabra del apellido.</p>
-            </div>
 
-            {/* Input Fecha */}
-            <div className="space-y-1">
-              <label className="block text-sm font-medium text-slate-700 ml-1">Fecha de Registro</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                  <Calendar size={18} />
+              {/* Input Fecha */}
+              <div className="form-group">
+                <label className="label">Fecha de Registro</label>
+                <div className="input-wrapper">
+                  <div className="input-icon">
+                    <Calendar size={18} />
+                  </div>
+                  <input
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    className="input"
+                  />
                 </div>
-                <input
-                  type="date"
-                  name="date"
-                  value={formData.date}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                />
               </div>
-            </div>
 
-            {error && (
-              <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg flex items-center gap-2">
-                <AlertCircle size={16} />
-                {error}
+              {error && (
+                <div className="error-box">
+                  <AlertCircle size={16} />
+                  {error}
+                </div>
+              )}
+
+              <button type="submit" className="btn-primary">
+                Crear Folio
+              </button>
+            </form>
+
+            {/* Resultado */}
+            {folio && (
+              <div className="result-section">
+                <p className="result-title">Folio Generado</p>
+                <div className="folio-display">
+                  <code className="folio-code">{folio}</code>
+                  <button
+                    onClick={copyToClipboard}
+                    className="btn-copy"
+                    title="Copiar al portapapeles"
+                  >
+                    {copied ? <CheckCircle size={20} style={{color: '#4ade80'}} /> : <Copy size={20} />}
+                  </button>
+                </div>
+                
+                <div className="details-box">
+                  <p><strong>Detalles del desglose:</strong></p>
+                  <ul className="details-list">
+                    <li>Inicial nombre: {firstNameDisplay[0]?.toUpperCase()}</li>
+                    <li>
+                      Posición 2da letra ({firstNameDisplay[1]?.toUpperCase() || '-'}): 
+                      {' '}{getLetterNumber(firstNameDisplay[1])}
+                    </li>
+                    <li>Inicial apellido: {lastNameDisplay[0]?.toUpperCase()}</li>
+                    <li>
+                      Posición 2da letra ({lastNameDisplay[1]?.toUpperCase() || '-'}): 
+                      {' '}{getLetterNumber(lastNameDisplay[1])}
+                    </li>
+                    <li>Día: {folio.slice(-2)}</li>
+                  </ul>
+                </div>
               </div>
             )}
-
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-colors duration-200 flex items-center justify-center gap-2"
-            >
-              Crear Folio
-            </button>
-          </form>
-
-          {/* Resultado */}
-          {folio && (
-            <div className="mt-8 pt-6 border-t border-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <p className="text-center text-sm text-slate-500 mb-2 uppercase tracking-wide font-semibold">Folio Generado</p>
-              <div className="bg-slate-800 rounded-xl p-4 flex items-center justify-between shadow-inner">
-                <code className="text-2xl font-mono text-green-400 tracking-wider font-bold">
-                  {folio}
-                </code>
-                <button
-                  onClick={copyToClipboard}
-                  className="p-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-300 transition-colors"
-                  title="Copiar al portapapeles"
-                >
-                  {copied ? <CheckCircle size={20} className="text-green-400" /> : <Copy size={20} />}
-                </button>
-              </div>
-              
-              <div className="mt-4 text-xs text-slate-400 bg-slate-50 p-3 rounded border border-slate-200">
-                <p><strong>Detalles del desglose:</strong></p>
-                <ul className="list-disc list-inside mt-1 space-y-1">
-                  <li>Inicial nombre: {firstNameDisplay[0]?.toUpperCase()}</li>
-                  <li>
-                    Posición 2da letra ({firstNameDisplay[1]?.toUpperCase() || '-'}): 
-                    {' '}{getLetterNumber(firstNameDisplay[1])}
-                  </li>
-                  <li>Inicial apellido: {lastNameDisplay[0]?.toUpperCase()}</li>
-                  <li>
-                    Posición 2da letra ({lastNameDisplay[1]?.toUpperCase() || '-'}): 
-                    {' '}{getLetterNumber(lastNameDisplay[1])}
-                  </li>
-                  <li>Día: {folio.slice(-2)}</li>
-                </ul>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
