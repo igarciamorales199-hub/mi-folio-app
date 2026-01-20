@@ -121,6 +121,7 @@ const styles = `
     outline: none;
     transition: all 0.2s;
     background-color: white;
+    color: #1e293b; /* Slate 800 - EXPLICITO: Evita texto blanco en modo oscuro */
     appearance: none; /* Normalizar renderizado en iOS/Móviles */
     -webkit-appearance: none;
   }
