@@ -31,6 +31,12 @@ const App = () => {
     return index !== -1 ? index + 1 : 0;
   };
 
+  // Helper para obtener partes del nombre de forma consistente (maneja espacios dobles)
+  const getNameParts = (fullName) => {
+    if (!fullName) return [];
+    return fullName.trim().split(/\s+/);
+  };
+
   const generateFolio = (e) => {
     e.preventDefault();
     
@@ -40,8 +46,8 @@ const App = () => {
       return;
     }
 
-    // Dividir el nombre completo en palabras
-    const nameParts = formData.fullName.trim().split(/\s+/);
+    // Dividir el nombre completo usando el helper seguro
+    const nameParts = getNameParts(formData.fullName);
     
     if (nameParts.length < 2) {
       setError('Por favor ingresa al menos un nombre y un apellido.');
@@ -72,12 +78,15 @@ const App = () => {
       const v4 = getLetterNumber(lastName[1]);
 
       // Variable 5: Día del mes (dos dígitos)
-      // Usamos la fecha seleccionada por el usuario. El formato es YYYY-MM-DD.
-      const v5 = formData.date.split('-')[2];
+      // Dividimos por guiones: YYYY-MM-DD -> [YYYY, MM, DD]
+      // Tomamos el índice 2 que corresponde al día
+      const dateParts = formData.date.split('-');
+      const v5 = dateParts[2] || '00'; // Fallback por seguridad
 
       const newFolio = `${v1}${v2}${v3}${v4}${v5}`;
       setFolio(newFolio);
     } catch (err) {
+      console.error(err);
       setError('Ocurrió un error al procesar los datos. Verifica que no haya caracteres especiales.');
     }
   };
@@ -87,6 +96,11 @@ const App = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  // Variables para el desglose visual (seguro contra errores de renderizado)
+  const namePartsDisplay = getNameParts(formData.fullName);
+  const firstNameDisplay = namePartsDisplay[0] || '';
+  const lastNameDisplay = namePartsDisplay[1] || '';
 
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4 font-sans text-slate-800">
@@ -175,10 +189,16 @@ const App = () => {
               <div className="mt-4 text-xs text-slate-400 bg-slate-50 p-3 rounded border border-slate-200">
                 <p><strong>Detalles del desglose:</strong></p>
                 <ul className="list-disc list-inside mt-1 space-y-1">
-                  <li>Inicial nombre: {folio.substring(0,1)}</li>
-                  <li>Posición 2da letra ({formData.fullName.trim().split(' ')[0][1]?.toUpperCase()}): {getLetterNumber(formData.fullName.trim().split(' ')[0][1])}</li>
-                  <li>Inicial apellido: {formData.fullName.trim().split(' ')[1]?.[0]?.toUpperCase()}</li>
-                  <li>Posición 2da letra ({formData.fullName.trim().split(' ')[1]?.[1]?.toUpperCase()}): {getLetterNumber(formData.fullName.trim().split(' ')[1]?.[1])}</li>
+                  <li>Inicial nombre: {firstNameDisplay[0]?.toUpperCase()}</li>
+                  <li>
+                    Posición 2da letra ({firstNameDisplay[1]?.toUpperCase() || '-'}): 
+                    {' '}{getLetterNumber(firstNameDisplay[1])}
+                  </li>
+                  <li>Inicial apellido: {lastNameDisplay[0]?.toUpperCase()}</li>
+                  <li>
+                    Posición 2da letra ({lastNameDisplay[1]?.toUpperCase() || '-'}): 
+                    {' '}{getLetterNumber(lastNameDisplay[1])}
+                  </li>
                   <li>Día: {folio.slice(-2)}</li>
                 </ul>
               </div>
