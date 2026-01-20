@@ -2,15 +2,26 @@ import React, { useState } from 'react';
 
 // --- ESTILOS CSS (Incrustados para garantizar diseño sin dependencias externas) ---
 const styles = `
-  /* Reset global para asegurar pantalla completa */
-  html, body, #root {
+  /* Reset global robusto para evitar desbordamientos */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html, body {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden; /* Evita scroll horizontal y cortes */
+    background-color: #f1f5f9; /* Slate 100 */
   }
   
+  #root {
+    width: 100%;
+    min-height: 100vh;
+  }
+
   .app-container {
     width: 100%;
     min-height: 100vh; /* Ocupar toda la altura vertical */
@@ -18,7 +29,6 @@ const styles = `
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #f1f5f9; /* Slate 100 */
     padding: 1rem;
     color: #1e293b; /* Slate 800 */
   }
@@ -75,6 +85,7 @@ const styles = `
 
   .input-wrapper {
     position: relative;
+    width: 100%; /* Asegurar ancho del contenedor */
   }
 
   .input-icon {
@@ -177,6 +188,7 @@ const styles = `
     color: #4ade80; /* Green 400 */
     font-weight: 700;
     letter-spacing: 0.05em;
+    word-break: break-all; /* Evita que folios muy largos rompan el diseño */
   }
 
   .btn-copy {
@@ -190,6 +202,7 @@ const styles = `
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0; /* Evita que el botón se aplaste */
   }
 
   .btn-copy:hover {
