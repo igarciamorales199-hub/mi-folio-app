@@ -67,11 +67,19 @@ const styles = `
   }
 
   .content {
-    padding: 2rem;
+    padding: 1.5rem; /* Reducido ligeramente para dar más espacio en móviles */
+  }
+
+  /* Media query para pantallas más grandes */
+  @media (min-width: 640px) {
+    .content {
+      padding: 2rem;
+    }
   }
 
   .form-group {
     margin-bottom: 1.25rem;
+    width: 100%; /* Asegurar que el grupo no exceda el padre */
   }
 
   .label {
@@ -98,16 +106,23 @@ const styles = `
     align-items: center;
     pointer-events: none;
     color: #94a3b8; /* Slate 400 */
+    z-index: 10; /* Asegurar que el ícono esté encima visualmente pero sin bloquear clicks */
   }
 
   .input {
+    display: block; /* Asegura comportamiento de bloque */
     width: 100%;
+    max-width: 100%; /* Prevenir desbordamiento */
+    box-sizing: border-box; /* Crucial: padding no suma al ancho */
     padding: 0.5rem 1rem 0.5rem 2.5rem;
     border: 1px solid #cbd5e1; /* Slate 300 */
     border-radius: 0.5rem;
     font-size: 1rem;
     outline: none;
     transition: all 0.2s;
+    background-color: white;
+    appearance: none; /* Normalizar renderizado en iOS/Móviles */
+    -webkit-appearance: none;
   }
 
   .input:focus {
@@ -180,6 +195,8 @@ const styles = `
     align-items: center;
     justify-content: space-between;
     box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+    width: 100%; /* Asegurar ancho completo */
+    box-sizing: border-box;
   }
 
   .folio-code {
@@ -189,6 +206,7 @@ const styles = `
     font-weight: 700;
     letter-spacing: 0.05em;
     word-break: break-all; /* Evita que folios muy largos rompan el diseño */
+    margin-right: 0.5rem;
   }
 
   .btn-copy {
