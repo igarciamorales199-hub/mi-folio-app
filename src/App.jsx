@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // --- Iconos Inline (SVG) para no depender de librerías externas ---
 const Icon = ({ size = 24, className = "", children }) => (
@@ -63,6 +63,18 @@ const App = () => {
   const [folio, setFolio] = useState('');
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
+
+  // Inyectar Tailwind CSS automáticamente si no está presente
+  // Esto asegura que se vea bien incluso si el proyecto no tiene la configuración completa
+  useEffect(() => {
+    const existingScript = document.querySelector('script[src="https://cdn.tailwindcss.com"]');
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = "https://cdn.tailwindcss.com";
+      script.async = true;
+      document.head.appendChild(script);
+    }
+  }, []);
 
   // Alfabeto en español incluyendo la Ñ para el cálculo de índices
   const spanishAlphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
