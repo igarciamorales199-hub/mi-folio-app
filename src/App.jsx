@@ -2,12 +2,20 @@ import React, { useState } from 'react';
 
 // --- ESTILOS CSS (Incrustados para garantizar diseño sin dependencias externas) ---
 const styles = `
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  /* Reset global para asegurar pantalla completa */
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
   
   .app-container {
-    min-height: 100vh;
+    width: 100%;
+    min-height: 100vh; /* Ocupar toda la altura vertical */
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     background-color: #f1f5f9; /* Slate 100 */
@@ -22,6 +30,7 @@ const styles = `
     width: 100%;
     max-width: 500px;
     overflow: hidden;
+    margin: auto; /* Asegura centrado extra */
   }
 
   .header {
