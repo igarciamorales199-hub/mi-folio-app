@@ -317,6 +317,7 @@ const App = () => {
     date: ''
   });
   const [folio, setFolio] = useState('');
+  const [randomData, setRandomData] = useState({ letter: '', number: '' });
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -361,15 +362,32 @@ const App = () => {
     }
 
     try {
+      // Variables originales
       const v1 = firstName[0].toUpperCase();
       const v2 = getLetterNumber(firstName[1]);
       const v3 = lastName[0].toUpperCase();
       const v4 = getLetterNumber(lastName[1]);
+      
       const dateParts = formData.date.split('-');
       const v5 = dateParts[2] || '00';
 
-      const newFolio = `${v1}${v2}${v3}${v4}${v5}`;
+      // --- Nuevas variables ---
+      
+      // Variable 6: Cantidad de letras del primer nombre
+      const v6 = firstName.length;
+
+      // Variable 7: Letra al azar
+      const v7 = spanishAlphabet[Math.floor(Math.random() * spanishAlphabet.length)];
+
+      // Variable 8: Número del 1 al 99 al azar
+      const v8 = Math.floor(Math.random() * 99) + 1;
+
+      // Generar Folio
+      const newFolio = `${v1}${v2}${v3}${v4}${v5}${v6}${v7}${v8}`;
+      
+      setRandomData({ letter: v7, number: v8 });
       setFolio(newFolio);
+
     } catch (err) {
       console.error(err);
       setError('Ocurrió un error al procesar los datos.');
@@ -480,7 +498,10 @@ const App = () => {
                       Posición 2da letra ({lastNameDisplay[1]?.toUpperCase() || '-'}): 
                       {' '}{getLetterNumber(lastNameDisplay[1])}
                     </li>
-                    <li>Día: {folio.slice(-2)}</li>
+                    <li>Día: {formData.date.split('-')[2] || '00'}</li>
+                    <li>Largo nombre ({firstNameDisplay}): {firstNameDisplay.length}</li>
+                    <li>Letra aleatoria: {randomData.letter}</li>
+                    <li>Número aleatorio: {randomData.number}</li>
                   </ul>
                 </div>
               </div>
